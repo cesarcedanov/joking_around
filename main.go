@@ -3,12 +3,16 @@ package main
 import (
 	"net/http"
 
+	"github.com/gin-gonic/contrib/static"
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
 	// Create a router from the Gin's Default router
 	router := gin.Default()
+
+	// Serve the frontend static files
+	router.Use(static.Serve("/", static.LocalFile("./views", true)))
 
 	// Create a group of router with the path prefix '/api/'
 	apiRoutes := router.Group("/api")
