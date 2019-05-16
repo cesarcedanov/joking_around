@@ -2,6 +2,7 @@ package main
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/contrib/static"
 	"github.com/gin-gonic/gin"
@@ -60,10 +61,20 @@ func GetJokes(c *gin.Context) {
 	c.JSON(http.StatusOK, jokes)
 }
 
-// LikeJoke return the total of likes of a specific Joke
+// LikeJoke increments the likes of a specific Joke
+// and will return the Joke struct or a Status Not Found
 func LikeJoke(c *gin.Context) {
 	c.Header("Content-Type", "application/json")
-	c.JSON(http.StatusOK, gin.H{
-		"message": "This endpoint will give a like to a joke.",
-	})
+
+	if jokeId, err := strconv.Atoi(c.Param("jokeID")); err == nil {
+		for _, joke := range jokes {
+			if joke.ID == jokeId {
+				joke.Likes++
+				c.JSON(http.StatusOK, &joke)
+				break
+			}
+		}
+	} else {
+		c.AbortWithStatus(http.StatusNotFound)
+	}
 }
