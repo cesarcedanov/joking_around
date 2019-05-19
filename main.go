@@ -22,15 +22,15 @@ type Joke struct {
 	Content string `json:"content" binding:"required"`
 }
 
-var jokes = []Joke{
-	Joke{1, 0, "JOKE 1"},
-	Joke{2, 0, "JOKE 2"},
-	Joke{3, 0, "JOKE 3"},
-	Joke{4, 0, "JOKE 4"},
-	Joke{5, 0, "JOKE 5"},
-	Joke{6, 0, "JOKE 6"},
-	Joke{7, 0, "JOKE 7"},
-	Joke{8, 0, "JOKE 8"},
+var jokes = []*Joke{
+	&Joke{1, 0, "JOKE 1"},
+	&Joke{2, 0, "JOKE 2"},
+	&Joke{3, 0, "JOKE 3"},
+	&Joke{4, 0, "JOKE 4"},
+	&Joke{5, 0, "JOKE 5"},
+	&Joke{6, 0, "JOKE 6"},
+	&Joke{7, 0, "JOKE 7"},
+	&Joke{8, 0, "JOKE 8"},
 }
 
 type Response struct {
@@ -82,16 +82,14 @@ func main() {
 }
 
 func validationKey(token *jwt.Token) (interface{}, error) {
-	fmt.Println(token)
+	// verify the api audience
 	aud := os.Getenv("AUTH0_API_AUDIENCE")
-	fmt.Println(aud)
 	checkAudience := token.Claims.(jwt.MapClaims).VerifyAudience(aud, false)
 	if !checkAudience {
 		return token, errors.New("Invalid audience.")
 	}
 	// verify iss claim
 	iss := os.Getenv("AUTH0_DOMAIN")
-	fmt.Println(iss)
 	checkIss := token.Claims.(jwt.MapClaims).VerifyIssuer(iss, false)
 	if !checkIss {
 		return token, errors.New("Invalid issuer.")

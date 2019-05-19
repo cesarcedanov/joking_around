@@ -153,35 +153,34 @@ class LoggedIn extends React.Component {
 
 class Joke extends React.Component {
   state = {
-    liked: "",
-    joke: {}
+    liked : false,
+    joke: this.props.joke || {}
   }
 
   like = () => {
-    this.likeJoke(this.props.joke);
+    this.likeJoke(this.state.joke);
   }
 
   likeJoke = (joke) => {
-    $.post(`http://localhost:9000/api/jokes/like/${joke.id}`, {like:1}, res => {
-      console.log(res);
-      this.setState( {liked: "Liked", joke : res });
-      this.props.joke = res
+    $.post(`http://localhost:9000/api/jokes/like/${joke.id}`, joke => {
+      this.setState( { joke, liked: true });
     })
   }
   
   render() {
-    const { joke } = this.props;
+    const { joke } = this.state;
     return(
       <div className="col-xs-4">
         <div className="panel panel-default">
           <div className="panel-heading">
             #{joke.id}
             <span className="pull-right">
-              {this.state.liked}
+              {this.state.liked ? 'Liked' : ""}
             </span>
           </div>
+          <div className="panel-body joke-hld">{this.props.joke.content}</div>
           <div className="panel-footer">
-            {joke.likes} Likes &nbsp;
+            {joke.likes} times- It made me laugh &nbsp;
             <a 
               className="btn btn-default"
               onClick={this.like}
